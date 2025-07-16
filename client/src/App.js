@@ -11,7 +11,7 @@ function App() {
       <Navbar />
         <Routes> {/* Wrap Routes around your Route components */}
           <Route path='/forms' element={<AllForms />} />
-          <Route path='/form' element={<Form />} />
+          <Route path='/forms/service/:serviceId' element={<Form />} />
         </Routes>
     </div>
   );
