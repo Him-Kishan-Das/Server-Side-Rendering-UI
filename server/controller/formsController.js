@@ -1,5 +1,37 @@
 import Forms from "../models/Forms.js";
 
+export const getForms = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const totalForms = await Forms.countDocuments({});
+
+    const forms = await Forms.find({})
+      .sort({ created_at: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalPages = Math.ceil(totalForms / limit);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
+
+    res.status(200).json({
+      success: true,
+      count: forms.length,
+      totalForms,
+      totalPages,
+      currentPage: page,
+      formsPerPage: limit,
+      hasNextPage,
+      hasPreviousPage,
+      data: forms
+    });
+  } catch (error) {
+    console.error("Error: ", error);
+  }
+};
+
 export const getFormsByServiceId = async (req, res) => {
   try {
     const { service_id } = req.params;
