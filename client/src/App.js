@@ -1,23 +1,18 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+import AllForms from './pages/AllForms';
+import Form from './pages/Form';
+import Navbar from './components/Navbar';
+import { Routes, Route } from 'react-router-dom'; // Correct import
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Navbar />
+        <Routes> {/* Wrap Routes around your Route components */}
+          <Route path='/forms' element={<AllForms />} />
+          <Route path='/form' element={<Form />} />
+        </Routes>
     </div>
   );
 }
