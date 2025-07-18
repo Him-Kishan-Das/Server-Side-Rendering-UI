@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./styles/Form.css";
+import { FaLock } from "react-icons/fa";
 
 const Form = () => {
-  const { serviceId } = useParams(); // Extract serviceId from URL
-  const [formData, setFormData] = useState([]); // Use empty array
+  const { serviceId } = useParams();
+  const [formData, setFormData] = useState([]);
 
   useEffect(() => {
     const fetchFormData = async () => {
@@ -25,39 +26,43 @@ const Form = () => {
     }
   }, [serviceId]);
 
-  if (FormData === null){
+  if (formData === null) {
     return <div className="container">Loading form...</div>;
   }
 
   const formName = formData.formName ? formData.formName.trim() : null;
   const description = formData.description ? formData.description.trim() : null;
   const formType = formData.type ? formData.type.trim() : null;
-  console.log(formType);
 
   return (
     <div className="container">
       <h1 className="formName">{formName}</h1>
       <p className="description">{description}</p>
 
-
       {formType === "stepper" && (
         <div className="stepper-content">
           <h2>Step-by-step Process</h2>
 
           {formData.steps && formData.steps.length > 0 ? (
-            <ol className="stepper-list">
-
+            <div className="stepper-cards-container">
               {formData.steps.map((step, index) => (
-                <li className="stepper-step" key={index}>
-                  <h3>{index + 1}</h3>
-                  <p>{step.header}</p>
-                </li>
+                <div className="stepper-card" key={index}>
+                  <div className="step-number">{index + 1}</div>
+                  <div className="step-content">
+                    <h3>{step.header}</h3>
+                    {step.intro && <p>{step.intro}</p>}
+                  </div>
+                  {step.isLock?.initVale && (
+                    <div className="lock-icon">
+                      <FaLock />
+                    </div>
+                  )}
+                </div>
               ))}
-
-            </ol>
-          ) :
-          <p>No Steps defined for this stepper form</p>
-          }
+            </div>
+          ) : (
+            <p>No Steps defined for this stepper form</p>
+          )}
         </div>
       )}
 

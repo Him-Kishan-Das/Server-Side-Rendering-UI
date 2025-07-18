@@ -39,126 +39,157 @@
   display: block;
   width: 80px;
   height: 3px;
-  background: #3498db;
+  background: linear-gradient(90deg, #3498db, #9b59b6);
   margin: 0.5rem auto;
+  border-radius: 3px;
 }
 
-.stepper-list {
-  list-style: none;
-  padding: 0;
+.stepper-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.stepper-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  padding-left: 4.5rem;
   position: relative;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
 }
 
-.stepper-list::before {
-  content: '';
+.stepper-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #3498db;
+}
+
+.step-number {
   position: absolute;
-  top: 0;
-  left: 40px;
-  height: 100%;
-  width: 2px;
-  background: #e0e0e0;
-}
-
-.stepper-step {
-  position: relative;
-  padding-left: 80px;
-  margin-bottom: 2rem;
-}
-
-.stepper-step h3 {
-  position: absolute;
-  left: 20px;
-  top: 0;
-  width: 40px;
-  height: 40px;
-  background: #3498db;
+  left: -15px;
+  top: -15px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #3498db, #9b59b6);
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+}
+
+.step-content h3 {
+  color: #2c3e50;
   font-size: 1.2rem;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
 }
 
-.stepper-step p {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-  margin: 0;
+.step-content p {
+  color: #7f8c8d;
   font-size: 1rem;
-  color: #34495e;
-  position: relative;
-  transition: all 0.3s ease;
+  line-height: 1.5;
+  margin: 0;
 }
 
-.stepper-step p::before {
-  content: '';
-  position: absolute;
-  top: 20px;
-  left: -10px;
-  width: 0;
-  height: 0;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-right: 10px solid white;
-}
-
-.stepper-step:hover p {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
-  
-  .formName {
-    font-size: 1.8rem;
-  }
-  
-  .stepper-step {
-    padding-left: 70px;
-  }
-  
-  .stepper-step h3 {
-    left: 15px;
-    width: 35px;
-    height: 35px;
-  }
-}
-
-/* Add this to your Form.css */
 .proceed {
-  background-color: #3498db; /* Blue color */
+  background: linear-gradient(135deg, #3498db, #9b59b6);
   color: white;
   border: none;
-  padding: 0.8rem 1.5rem;
+  padding: 0.8rem 2rem;
   font-size: 1rem;
-  border-radius: 5px;
+  border-radius: 30px;
   cursor: pointer;
   transition: all 0.3s ease;
-  float: right; /* Align to right */
-  margin-top: 1rem;
+  margin-top: 2rem;
   font-weight: 500;
+  display: block;
+  width: fit-content;
+  margin-left: auto;
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
 }
 
 .proceed:hover {
-  background-color: #2980b9; /* Darker blue on hover */
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4);
+  background: linear-gradient(135deg, #2980b9, #8e44ad);
 }
 
 .proceed:active {
   transform: translateY(0);
 }
 
-/* Clear the float if needed */
-.stepper-content::after {
-  content: "";
-  display: table;
-  clear: both;
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
+  
+  .formName {
+    font-size: 1.8rem;
+  }
+  
+  .stepper-card {
+    padding-left: 3.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  .step-number {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    left: -10px;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stepper-card {
+  animation: fadeInUp 0.5s ease forwards;
+  opacity: 0;
+}
+
+.stepper-card:nth-child(1) { animation-delay: 0.1s; }
+.stepper-card:nth-child(2) { animation-delay: 0.2s; }
+.stepper-card:nth-child(3) { animation-delay: 0.3s; }
+.stepper-card:nth-child(4) { animation-delay: 0.4s; }
+.stepper-card:nth-child(5) { animation-delay: 0.5s; }
+
+.lock-icon {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  color: #7f8c8d;
+  font-size: 1.2rem;
+}
+
+.stepper-card.locked {
+  background-color: #f8f9fa;
+  border-left: 4px solid #e74c3c;
+}
+
+.stepper-card.locked .step-number {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.lock-icon:hover {
+  color: #e74c3c;
+  transform: scale(1.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
