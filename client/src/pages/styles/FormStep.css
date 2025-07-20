@@ -1,0 +1,185 @@
+/* Main container styles */
+.form-step-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #2c3e50;
+  }
+  
+  /* Form header styles */
+  .form-header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .form-title {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-description {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .step-indicator {
+    background-color: #3498db;
+    color: white;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+  }
+  
+  /* Step card styles */
+  .step-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .step-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #ecf0f1;
+  }
+  
+  .step-number {
+    background-color: #3498db;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-right: 1rem;
+  }
+  
+  .step-title {
+    margin: 0;
+    font-size: 1.5rem;
+    flex-grow: 1;
+  }
+  
+  .lock-icon {
+    color: #e74c3c;
+    font-size: 1.2rem;
+  }
+  
+  /* Step content styles */
+  .step-content {
+    margin-bottom: 1.5rem;
+  }
+  
+  .step-intro {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Documents section */
+  .documents-section {
+    background-color: #f8f9fa;
+    padding: 1.2rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .documents-section h3 {
+    margin-top: 0;
+    margin-bottom: 0.8rem;
+    color: #2c3e50;
+  }
+  
+  .documents-section ul {
+    padding-left: 1.5rem;
+    margin: 0;
+  }
+  
+  .documents-section li {
+    margin-bottom: 0.5rem;
+    color: #34495e;
+  }
+  
+  /* Navigation buttons */
+  .navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+  }
+  
+  .back-button, .next-button {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+  }
+  
+  .back-button {
+    background-color: #f8f9fa;
+    color: #7f8c8d;
+    border: 1px solid #ddd;
+  }
+  
+  .back-button:hover {
+    background-color: #ecf0f1;
+  }
+  
+  .next-button {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .next-button:hover {
+    background-color: #2980b9;
+  }
+  
+  .submit-button {
+    background-color: #2ecc71;
+  }
+  
+  .submit-button:hover {
+    background-color: #27ae60;
+  }
+  
+  /* Loading and error states */
+  .loading-container, .error-container {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.2rem;
+  }
+  
+  .error-container {
+    color: #e74c3c;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .form-step-container {
+      padding: 1.5rem;
+      margin: 1rem;
+    }
+    
+    .form-title {
+      font-size: 1.5rem;
+    }
+    
+    .step-card {
+      padding: 1.5rem;
+    }
+  }
