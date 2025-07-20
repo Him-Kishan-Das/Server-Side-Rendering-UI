@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./styles/Form.css";
 import { FaLock } from "react-icons/fa";
@@ -25,6 +25,22 @@ const Form = () => {
       fetchFormData();
     }
   }, [serviceId]);
+
+
+  const navigate = useNavigate();
+
+  const handleProceed = () => {
+    if(formData.steps && formData.steps.length > 0){
+      navigate(`/service/${serviceId}/step/1`, {
+        state: {
+          stepData: formData.steps[0],
+          formName: formData.formName,
+          totalSteps: formData.steps.length,
+          currentStep: 1
+        }
+      });
+    }
+  };
 
   if (formData === null) {
     return <div className="container">Loading form...</div>;
@@ -66,7 +82,7 @@ const Form = () => {
         </div>
       )}
 
-      <button className="proceed">Proceed to Apply</button>
+      <button className="proceed" onClick={handleProceed}>Proceed to Apply</button>
     </div>
   );
 };
