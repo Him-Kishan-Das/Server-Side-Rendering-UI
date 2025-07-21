@@ -97,7 +97,8 @@ const FormStep = () => {
 
           <div className="step-component">
             {currentStepData.stepType === "FormPage" && (
-              <FormPage stepData={currentStepData} />
+              <FormPage stepData={currentStepData} 
+              formFields={currentStepData.formData} />
             )}
             {currentStepData.stepType === "Preview" && (
               <Preview stepData={currentStepData} />
