@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import FormPage from "../components/FormPage";
+import FormData from "../components/FormData";
 import Preview from "../components/Preview";
 import Payment from "../components/Payment";
 import axios from "axios";
 import { FaLock, FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import "./styles/FormStep.css"; // We'll create this CSS file
+import NavigationButtons from "../components/NavigationButtons";
 
 const FormStep = () => {
   const { serviceId, stepId } = useParams();
@@ -97,7 +98,7 @@ const FormStep = () => {
 
           <div className="step-component">
             {currentStepData.stepType === "FormPage" && (
-              <FormPage stepData={currentStepData} 
+              <FormData stepData={currentStepData} 
               formFields={currentStepData.formData} />
             )}
             {currentStepData.stepType === "Preview" && (
@@ -110,6 +111,10 @@ const FormStep = () => {
         </div>
 
         <div className="navigation-buttons">
+
+
+          <NavigationButtons stepData={currentStepData} navButtons={currentStepData.navigationButtons} />
+
           {parseInt(stepId) > 1 && (
             <button className="back-button" onClick={handleBack}>
               <FaArrowLeft /> Back

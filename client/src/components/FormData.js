@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import "./styles/FormPage.css";
 import FieldFactory from "./fields/FieldFactory";
 
-const FormPage = ({ stepData, formFields }) => {
+const FormData
+ = ({ stepData, formFields }) => {
   useEffect(() => {
     console.log(formFields);
     console.log(formFields[0].label);
@@ -42,4 +43,5 @@ const FormPage = ({ stepData, formFields }) => {
   );
 };
 
-export default FormPage;
+export default FormData
+;
