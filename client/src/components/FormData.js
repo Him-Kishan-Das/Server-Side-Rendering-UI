@@ -21,7 +21,7 @@ const FormData
                     field.isRequired ? "required-field" : ""
                   }`}
                 >
-                  {field.label.en}
+                   {field?.label?.en ?? ''}
                 </label>
 
                 <FieldFactory field={field} />

@@ -113,7 +113,12 @@ const FormStep = () => {
         <div className="navigation-buttons">
 
 
-          <NavigationButtons stepData={currentStepData} navButtons={currentStepData.navigationButtons} />
+        {currentStepData.navigationButtons && (
+            <NavigationButtons 
+              stepData={currentStepData} 
+              navButtons={currentStepData.navigationButtons} 
+            />
+          )}
 
           {parseInt(stepId) > 1 && (
             <button className="back-button" onClick={handleBack}>
