@@ -3,7 +3,7 @@ import "./styles/FormPage.css";
 import FieldFactory from "./fields/FieldFactory";
 
 const FormData
- = ({ stepData, formFields }) => {
+ = ({ stepData, formFields, formValues, onFieldChange }) => {
   useEffect(() => {
     console.log(formFields);
     console.log(formFields[0].label);
@@ -24,7 +24,7 @@ const FormData
                    {field?.label?.en ?? ''}
                 </label>
 
-                <FieldFactory field={field} />
+                <FieldFactory field={field} onChange={(value) => onFieldChange(field.variable, value) }/>
               </div>
             ))}
             <input

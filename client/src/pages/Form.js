@@ -31,9 +31,16 @@ const Form = () => {
 
   const handleProceed = () => {
     if(formData.steps && formData.steps.length > 0){
-      navigate(`/service/${serviceId}/step/1`, {
+      const firstStep = formData.steps[0];
+
+      if(firstStep.isLock?.initVale === true){
+        alert("This form is currently locked and cannot be accessed.");
+        return;
+      }
+
+      navigate(`/service/${serviceId}/step/1`,{
         state: {
-          stepData: formData.steps[0],
+          setpData: firstStep,
           formName: formData.formName,
           totalSteps: formData.steps.length,
           currentStep: 1

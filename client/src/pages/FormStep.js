@@ -39,9 +39,43 @@ const FormStep = () => {
     fetchFormData();
   }, [serviceId, stepId]);
 
+
+  const [formValues, setFormValues] = useState({});
+
+  const isStepLocked = currentStepData?.isLock?.initVale === true;
+  const dratValueCheck = currentStepData?.isLock?.draftValueCheck;
+
+  const handleFieldChange = (fieldName, value) => {
+    setFormValues(prev => ({
+      ...prev,
+      [fieldName]: value
+    }));
+  };
+
+  const handleSubmit = (responseData) => {
+    const nextStep = parseInt(stepId) + 1;
+    if(nextStep <= formData.steps.length){
+      navigate(`/service/${serviceId}/step/${nextStep}`);
+    }
+  };
+
+  const handleReset = () => {
+    setFormValues({});
+  };
+
   const handleNext = () => {
+    if(isStepLocked){
+      alert("this step is locked. Please complete previous steps.");
+      return;
+    }
+
     const nextStep = parseInt(stepId) + 1;
     if (nextStep <= formData.steps.length) {
+      const nextStepData = formData.steps[nextStep - 1];
+      if(nextStep?.isLock?.initVale === true){
+        alert("The next step is currently locked.");
+        return;
+      }
       navigate(`/service/${serviceId}/step/${nextStep}`);
     }
   };
@@ -99,7 +133,10 @@ const FormStep = () => {
           <div className="step-component">
             {currentStepData.stepType === "FormPage" && (
               <FormData stepData={currentStepData} 
-              formFields={currentStepData.formData} />
+              formFields={currentStepData.formData} 
+              formValues={formValues}
+              onFieldChange={handleFieldChange}
+              />
             )}
             {currentStepData.stepType === "Preview" && (
               <Preview stepData={currentStepData} />
@@ -117,6 +154,10 @@ const FormStep = () => {
             <NavigationButtons 
               stepData={currentStepData} 
               navButtons={currentStepData.navigationButtons} 
+              formValues={formValues}
+              onBack={handleBack}
+              onSubmit={handleSubmit}
+              onReset={handleReset}
             />
           )}
 

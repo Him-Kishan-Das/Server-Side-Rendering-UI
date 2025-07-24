@@ -5,20 +5,34 @@ import FormReset from "./navigationButtons/FormReset";
 import JsonBack from "./navigationButtons/JsonBack";
 import './styles/NavigationButtons.css'
 
-const NavigationButtons = ({ stepData, navButtons }) => {
+const NavigationButtons = ({ stepData, navButtons, formValues, onBack, onSubmit, onReset }) => {
+
+  if(!navButtons || !Array.isArray(navButtons)){
+    return null;
+  }
+
   return (
     <>
       <div className="navigation-buttons">
         {navButtons.map((button, index) => {
+          const commonProps = {
+            key: index,
+            button,
+            formValues,
+            isLocked: stepData?.isLock?.initVale === true,
+            draftValue: stepData?.isLock?.draftValueCheck 
+              ? formValues?.[stepData.isLock.draftValueCheck] 
+              : null
+          };
           switch (button.type) {
             case "system_back":
-              return <SystemBack key={index} button={button} />;
+              return <SystemBack {...commonProps} onBack={onBack} />;
             case "post_nav_btn":
-              return <PostNavBtn key={index} button={button} />;
+              return <PostNavBtn {...commonProps} onSubmit={onSubmit} />;
             case "form_reset":
-              return <FormReset key={index} button={button} />;
+              return <FormReset {...commonProps} onReset={onReset} />;
             case "json_back":
-              return <JsonBack key={index} button={button} />;
+              return <JsonBack {...commonProps} onBack={onBack} />;
             default:
               return null;
           }
