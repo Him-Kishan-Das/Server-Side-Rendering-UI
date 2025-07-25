@@ -1,14 +1,15 @@
 import axios from "axios";
 import React from "react";
 
-const PostNavBtn = ({ 
-  button, 
-  formValues, 
-  onSubmit, 
-  isLocked, 
+const PostNavBtn = ({
+  button,
+  formValues,
+  onSubmit,
+  isLocked,
   draftValue,
   isLastStep,
-  onProceed 
+  onProceed,
+  serviceId 
 }) => {
   const handleClick = async () => {
     if (isLocked) {
@@ -16,7 +17,6 @@ const PostNavBtn = ({
       return;
     }
 
-    // Check if draftValueCheck condition is met
     if (button.endpoint?.requiredKeys) {
       const missingFields = button.endpoint.requiredKeys.filter(
         key => !formValues?.[key]
@@ -28,14 +28,42 @@ const PostNavBtn = ({
     }
 
     try {
-      // Handle API call if endpoint exists
       if (button.endpoint) {
+        let uriToUse;
+        switch (button.endpoint.type) {
+          case "GET":
+            uriToUse = button.endpoint.getUri;
+            break;
+          case "POST":
+            uriToUse = button.endpoint.postUri;
+            break;
+          case "PATCH":
+            uriToUse = button.endpoint.patchUri;
+            break;
+          default:
+            console.error("Unknown endpoint type:", button.endpoint.type);
+            alert("Error: Unknown endpoint type.");
+            return;
+        }
+
+        if (!uriToUse) {
+          console.error(`URI is undefined for endpoint type: ${button.endpoint.type}`);
+          alert("Error: API URL is missing for this action. Please check the form configuration.");
+          return;
+        }
+
+        const requestData = { 
+          user_id: "user123", 
+          service_id: serviceId,
+          formData: formValues
+        };
+
         const response = await axios({
           method: button.endpoint.type.toLowerCase(),
-          url: button.endpoint.getUri.replace(/(\w+)_/g, (match, p1) => 
+          url: uriToUse.replace(/(\w+)_/g, (match, p1) =>
             formValues?.[p1] || match
           ),
-          data: formValues
+          data: requestData
         });
 
         if (isLastStep) {

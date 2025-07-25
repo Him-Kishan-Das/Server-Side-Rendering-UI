@@ -16,7 +16,9 @@ router.post("/application/save-step/:stepNumber", saveStepByNumber);
 router.post("/application/submit", submitForm);
 
 // Get full user application
-router.get("/application", getUserApplication);
+router.get("/application/", getUserApplication);
+
+
 // GET /application/step/:stepNumber?user_id=...&service_id=... 
 
 router.get("/application/step/:stepNumber", getStepByNumber);

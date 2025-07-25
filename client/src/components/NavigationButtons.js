@@ -5,7 +5,7 @@ import FormReset from "./navigationButtons/FormReset";
 import JsonBack from "./navigationButtons/JsonBack";
 import './styles/NavigationButtons.css'
 
-const NavigationButtons = ({ stepData, navButtons, formValues, onBack, onSubmit, onReset }) => {
+const NavigationButtons = ({ stepData, navButtons, formValues, onBack, onSubmit, onReset, onProceed, serviceId }) => {
 
   if(!navButtons || !Array.isArray(navButtons)){
     return null;
@@ -28,7 +28,7 @@ const NavigationButtons = ({ stepData, navButtons, formValues, onBack, onSubmit,
             case "system_back":
               return <SystemBack {...commonProps} onBack={onBack} />;
             case "post_nav_btn":
-              return <PostNavBtn {...commonProps} onSubmit={onSubmit} />;
+              return <PostNavBtn {...commonProps} onSubmit={onSubmit} onProceed={onProceed} serviceId={serviceId}/>;
             case "form_reset":
               return <FormReset {...commonProps} onReset={onReset} />;
             case "json_back":

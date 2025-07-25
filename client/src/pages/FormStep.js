@@ -15,35 +15,70 @@ const FormStep = () => {
   const [formData, setFormData] = useState(null);
   const [currentStepData, setCurrentStepData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [formValues, setFormValues] = useState({});
+
+  const userId = "user123";
 
   useEffect(() => {
-    const fetchFormData = async () => {
+    const fetchAllData = async () => {
       try {
+        setLoading(true); 
         const baseURL = process.env.REACT_APP_API_BASE_URL;
-        const response = await axios.get(
+
+        const formResponse = await axios.get(
           `${baseURL}/forms/service/${serviceId}`
         );
-        setFormData(response.data[0]);
+        const fetchedFormData = formResponse.data[0];
+        setFormData(fetchedFormData);
 
         const stepIndex = parseInt(stepId) - 1;
-        if (response.data[0]?.steps?.[stepIndex]) {
-          setCurrentStepData(response.data[0].steps[stepIndex]);
+        if (fetchedFormData?.steps?.[stepIndex]) {
+          setCurrentStepData(fetchedFormData.steps[stepIndex]);
+        } else {
+          console.warn(`Step data not found for stepId: ${stepId}`);
+          setLoading(false);
+          return; 
         }
+
+        const applicationAPI = fetchedFormData?.endPoint?.gettUri;
+
+        if (applicationAPI) {
+          try {
+            const applicationResponse = await axios.get(
+              `${applicationAPI}?user_id=${userId}&service_id=${serviceId}`
+            );
+
+            // Log the response from the application GET URI
+            console.log("Response from application GET URI:", applicationResponse.data);
+
+            if (applicationResponse.data && applicationResponse.data.formData) {
+              setFormValues(applicationResponse.data.formData);
+            }
+          } catch (appError) {
+            if (appError.response && appError.response.status === 404) {
+              console.info("No existing application found for this user and service. Starting fresh.");
+            } else {
+              // Log the error for the application data fetch
+              console.error("Error fetching user application data from dynamic getUri:", appError.response ? appError.response.data : appError.message);
+            }
+          }
+        } else {
+          console.warn("No 'gettUri' found in formData.endPoint. Cannot fetch existing application data.");
+        }
+
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
+        console.error("Error fetching initial form or application data:", error);
+        setLoading(false); 
       }
     };
 
-    fetchFormData();
+    fetchAllData();
   }, [serviceId, stepId]);
 
 
-  const [formValues, setFormValues] = useState({});
-
   const isStepLocked = currentStepData?.isLock?.initVale === true;
-  const dratValueCheck = currentStepData?.isLock?.draftValueCheck;
+  // const dratValueCheck = currentStepData?.isLock?.draftValueCheck;
 
   const handleFieldChange = (fieldName, value) => {
     setFormValues(prev => ({
@@ -72,11 +107,15 @@ const FormStep = () => {
     const nextStep = parseInt(stepId) + 1;
     if (nextStep <= formData.steps.length) {
       const nextStepData = formData.steps[nextStep - 1];
-      if(nextStep?.isLock?.initVale === true){
+      if(nextStepData?.isLock?.initVale === true){
         alert("The next step is currently locked.");
         return;
       }
       navigate(`/service/${serviceId}/step/${nextStep}`);
+    }
+
+    else if(formData?.steps && parseInt(stepId) == formData.steps.length){
+      console.log("Reached last step. Handle final submission or just navigate away.");
     }
   };
 
@@ -158,6 +197,8 @@ const FormStep = () => {
               onBack={handleBack}
               onSubmit={handleSubmit}
               onReset={handleReset}
+              onProceed={handleNext}
+              serviceId={serviceId}
             />
           )}
 
