@@ -1,9 +1,9 @@
 import React from "react";
 
-const TextView = ({field}) => {
+const TextView = ({field, value }) => {
     return (
         <div className="text-view">
-            {field.value || 'N/A' }
+            {value || field.value || 'N/A' }
         </div>
     );
 };

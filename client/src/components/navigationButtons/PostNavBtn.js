@@ -1,3 +1,5 @@
+// In PostNavBtn.js
+
 import axios from "axios";
 import React from "react";
 
@@ -6,10 +8,11 @@ const PostNavBtn = ({
   formValues,
   onSubmit,
   isLocked,
-  draftValue,
-  isLastStep,
+  draftValue, 
+  isLastStep, 
   onProceed,
-  serviceId 
+  serviceId,
+  currentStepFields 
 }) => {
   const handleClick = async () => {
     if (isLocked) {
@@ -17,15 +20,16 @@ const PostNavBtn = ({
       return;
     }
 
-    if (button.endpoint?.requiredKeys) {
-      const missingFields = button.endpoint.requiredKeys.filter(
-        key => !formValues?.[key]
-      );
-      if (missingFields.length > 0) {
-        alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
-        return;
-      }
-    }
+    // REMOVED: The requiredKeys validation logic has been removed as per your request.
+    // if (button.endpoint?.requiredKeys) {
+    //   const missingFields = button.endpoint.requiredKeys.filter(
+    //     key => !formValues?.[key]
+    //   );
+    //   if (missingFields.length > 0) {
+    //     alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+    //     return;
+    //   }
+    // }
 
     try {
       if (button.endpoint) {
@@ -52,30 +56,53 @@ const PostNavBtn = ({
           return;
         }
 
-        const requestData = { 
+        // 1. Construct stepSpecificData based on currentStepFields
+        let stepSpecificData = {};
+        if (currentStepFields && Array.isArray(currentStepFields)) {
+          currentStepFields.forEach(field => {
+            if (field.variable && formValues.hasOwnProperty(field.variable)) {
+              stepSpecificData[field.variable] = formValues[field.variable];
+            }
+          });
+        }
+        
+        // 2. Filter out keys specified in notIncludeKeys
+        if (button.endpoint.notIncludeKeys && Array.isArray(button.endpoint.notIncludeKeys)) {
+          button.endpoint.notIncludeKeys.forEach(key => {
+            if (stepSpecificData.hasOwnProperty(key)) {
+              delete stepSpecificData[key];
+            }
+          });
+        }
+        
+        const requestData = {
           user_id: "user123", 
-          service_id: serviceId,
-          formData: formValues
+          service_id: serviceId, 
+          formData: stepSpecificData 
         };
+
+        // Replace URI placeholders (e.g., _doc_id_) using full formValues
+        const finalUri = uriToUse.replace(/(\w+)_/g, (match, p1) =>
+          formValues?.[p1] || match
+        );
 
         const response = await axios({
           method: button.endpoint.type.toLowerCase(),
-          url: uriToUse.replace(/(\w+)_/g, (match, p1) =>
-            formValues?.[p1] || match
-          ),
+          url: finalUri,
           data: requestData
         });
 
-        if (isLastStep) {
-          onSubmit(response.data); // Final submission
+        if (isLastStep) { 
+          onSubmit(response.data); 
         } else {
-          onProceed(response.data); // Move to next step
+          onProceed(response.data); 
         }
       } else {
+        // Fallback if no endpoint is defined for the button
         if (isLastStep) {
-          onSubmit(); // Final submission
+          onSubmit(); 
         } else {
-          onProceed(); // Move to next step
+          onProceed(); 
         }
       }
     } catch (error) {
@@ -88,9 +115,9 @@ const PostNavBtn = ({
     <button
       className={`nav-button post-nav-btn ${isLocked ? 'disabled' : ''}`}
       onClick={handleClick}
-      disabled={isLocked || (button.endpoint?.requiredKeys && !draftValue)}
+      disabled={isLocked}
     >
-      {isLastStep ? "Submit" : button.enLabel || "Proceed"}
+      {button.enLabel}
     </button>
   );
 };

@@ -1,6 +1,6 @@
 import React from "react";
 
-const PhoneField = ({ field }) => {
+const PhoneField = ({ field, value, onChange }) => {
   return (
   <input 
   type="tel" 
@@ -11,6 +11,8 @@ const PhoneField = ({ field }) => {
   className="form-input"
   pattern="[0-9]{10}"
   placeholder={field.placeholder || 'Enter Phone number'}
+  value={value || ''}
+  onChange={(e) => onChange(e.target.value)}
   />
 );
 };

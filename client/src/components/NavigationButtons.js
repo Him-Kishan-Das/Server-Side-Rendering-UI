@@ -1,13 +1,15 @@
-import React, { useEffect } from "react";
+// In NavigationButtons.js
+
+import React from "react"; // Removed useEffect as it's not used directly here
 import SystemBack from "./navigationButtons/SystemBack";
 import PostNavBtn from "./navigationButtons/PostNavBtn";
 import FormReset from "./navigationButtons/FormReset";
 import JsonBack from "./navigationButtons/JsonBack";
 import './styles/NavigationButtons.css'
 
-const NavigationButtons = ({ stepData, navButtons, formValues, onBack, onSubmit, onReset, onProceed, serviceId }) => {
-
-  if(!navButtons || !Array.isArray(navButtons)){
+const NavigationButtons = ({ stepData, navButtons, formValues, onBack, onSubmit, onReset, onProceed, serviceId, currentStepFields, isCurrentStepLocked }) => {
+  // Corrected 'ArrayOf' to 'Array.isArray'
+  if (!navButtons || !Array.isArray(navButtons)) {
     return null;
   }
 
@@ -19,16 +21,24 @@ const NavigationButtons = ({ stepData, navButtons, formValues, onBack, onSubmit,
             key: index,
             button,
             formValues,
-            isLocked: stepData?.isLock?.initVale === true,
-            draftValue: stepData?.isLock?.draftValueCheck 
-              ? formValues?.[stepData.isLock.draftValueCheck] 
+            isLocked: isCurrentStepLocked, // Using the isCurrentStepLocked prop
+            draftValue: stepData?.isLock?.draftValueCheck
+              ? formValues?.[stepData.isLock.draftValueCheck]
               : null
           };
           switch (button.type) {
             case "system_back":
               return <SystemBack {...commonProps} onBack={onBack} />;
             case "post_nav_btn":
-              return <PostNavBtn {...commonProps} onSubmit={onSubmit} onProceed={onProceed} serviceId={serviceId}/>;
+              return (
+                <PostNavBtn
+                  {...commonProps}
+                  onSubmit={onSubmit}
+                  onProceed={onProceed}
+                  serviceId={serviceId}
+                  currentStepFields={currentStepFields} // Passing currentStepFields
+                />
+              );
             case "form_reset":
               return <FormReset {...commonProps} onReset={onReset} />;
             case "json_back":
