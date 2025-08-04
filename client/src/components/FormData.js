@@ -3,11 +3,12 @@ import "./styles/FormPage.css";
 import FieldFactory from "./fields/FieldFactory";
 
 const FormData
- = ({ stepData, formFields, formValues, onFieldChange }) => {
+ = ({ stepData, formFields, formValues, onFieldChange, formDraftValue }) => {
   useEffect(() => {
     // These console logs are useful for debugging but can be removed in production
     console.log("Form Fields for current step:", formFields);
     console.log("Current Form Values (FormData component):", formValues);
+    console.log("Form Draft values: ", formDraftValue);
   }, [formFields, formValues]); // Depend on formFields and formValues to log changes
 
   return (
