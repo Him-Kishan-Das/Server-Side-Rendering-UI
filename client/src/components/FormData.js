@@ -2,14 +2,16 @@ import React, { useEffect } from "react";
 import "./styles/FormPage.css";
 import FieldFactory from "./fields/FieldFactory";
 
-const FormData
- = ({ stepData, formFields, formValues, onFieldChange, formDraftValue }) => {
+const FormData = ({ stepData, formFields, formValues, onFieldChange, formDraftValue, currentStep }) => {
   useEffect(() => {
-    // These console logs are useful for debugging but can be removed in production
     console.log("Form Fields for current step:", formFields);
     console.log("Current Form Values (FormData component):", formValues);
     console.log("Form Draft values: ", formDraftValue);
-  }, [formFields, formValues]); // Depend on formFields and formValues to log changes
+  }, [formFields, formValues, formDraftValue]); 
+
+  const stepDraftValues = formDraftValue?.steps?.[currentStep] || {};
+  
+  const mergedValues = {...stepDraftValues, ...formValues};
 
   return (
     <>
@@ -19,18 +21,17 @@ const FormData
             {formFields.map((field, index) => (
               <div className="form-field" key={index}>
                 <label
-                  htmlFor={field.variable} // Use field.variable as id for better accessibility
+                  htmlFor={field.variable} 
                   className={`form-label ${
                     field.isRequired ? "required-field" : ""
                   }`}
                 >
-                   {field?.label?.en ?? ''}
+                  {field?.label?.en ?? ''}
                 </label>
 
-                {/* Pass the current field value from formValues to FieldFactory */}
                 <FieldFactory 
                   field={field} 
-                  value={formValues[field.variable]} // Pass current value
+                  value={mergedValues[field.variable]}
                   onChange={(value) => onFieldChange(field.variable, value)}
                 />
               </div>
@@ -42,5 +43,4 @@ const FormData
   );
 };
 
-export default FormData
-;
+export default FormData;

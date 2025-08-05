@@ -21,6 +21,7 @@ const FormStep = () => {
   const [formDraftValue, setFormDraftValue] = useState({});
 
   const userId = "user123"; // Keeping userId consistent
+  const currentStepIndex = parseInt(stepId) - 1;
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -60,21 +61,23 @@ const FormStep = () => {
       try {
         const baseURL = process.env.REACT_APP_API_BASE_URL;
         const response = await axios.get(`${baseURL}/application/?user_id=${userId}&service_id=${serviceId}`);
-       
         const data = await response.data;
         setFormDraftValue(data);
-        console.log(data);
-
+        
+        // Initialize form values with draft data for current step if available
+        if (data?.steps?.[currentStepIndex]) {
+          setFormValues(prev => ({
+            ...prev,
+            ...data.steps[currentStepIndex]
+          }));
+        }
       } catch (error) {
-        console.error('Error: ', error)
+        console.error('Error fetching draft data: ', error);
       } 
     };
 
     fetchDraftData();
-  }, [userId, serviceId])
-
-
-
+  }, [userId, serviceId, currentStepIndex]);
 
   const handleFieldChange = (fieldName, value) => {
     setFormValues(prevValues => ({
@@ -150,6 +153,7 @@ const FormStep = () => {
               formValues={formValues}
               onFieldChange={handleFieldChange}
               formDraftValue={formDraftValue}
+              currentStep={currentStepIndex}
             />
           )}
           {currentStepData.stepType === "Preview" && (

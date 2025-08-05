@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PhoneField from "./PhoneField";
 import TextField from "./TextField";
 import TextView from "./TextView";
 import DropDown from "./DropDown";
 
 const FieldFactory = ({field, value, onChange}) => {
+    useEffect(() => {
+        console.log(value);
+    })
     switch(field.type){
         case 'textfield':
             return <TextField field={field} value={value} onChange={onChange} />
