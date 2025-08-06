@@ -3,6 +3,9 @@ import PhoneField from "./PhoneField";
 import TextField from "./TextField";
 import TextView from "./TextView";
 import DropDown from "./DropDown";
+import DependencyDropdown from "./DependencyDropdown";
+import SingleBoolRadio from "./SingleBoolRadio";
+import CheckBoxRadio from "./CheckBoxRadio";
 
 const FieldFactory = ({field, value, onChange}) => {
     useEffect(() => {
@@ -17,6 +20,12 @@ const FieldFactory = ({field, value, onChange}) => {
             return <TextView field={field} value={value} />
         case 'dropdown':
             return <DropDown field={field} value={value} onChange={onChange} />
+        case 'dependencyDropdown':
+            return <DependencyDropdown field={field} value={value} onChange={onChange} />
+        case 'singleBoolRadio':
+            return <SingleBoolRadio field={field} value={value} onChange={onChange} />
+        case 'checkBoxRadio':
+            return <CheckBoxRadio field={field} value={value} onChange={onChange} />;
         default: 
             return <div>Unsupported field type: {field.type}</div>
         
