@@ -6,6 +6,8 @@ import DropDown from "./DropDown";
 import DependencyDropdown from "./DependencyDropdown";
 import SingleBoolRadio from "./SingleBoolRadio";
 import CheckBoxRadio from "./CheckBoxRadio";
+import Radio from "./Radio";
+import Enclosure from "./Enclosure";
 
 const FieldFactory = ({field, value, onChange}) => {
     useEffect(() => {
@@ -26,6 +28,10 @@ const FieldFactory = ({field, value, onChange}) => {
             return <SingleBoolRadio field={field} value={value} onChange={onChange} />
         case 'checkBoxRadio':
             return <CheckBoxRadio field={field} value={value} onChange={onChange} />;
+        case 'radio':
+            return <Radio field={field} value={value} onChange={onChange} />
+        case 'enclosure':
+            return <Enclosure field={field} value={value} onChange={onChange} />;
         default: 
             return <div>Unsupported field type: {field.type}</div>
         

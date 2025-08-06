@@ -7,8 +7,8 @@ const CheckBoxRadio = ({ field, value = [], onChange }) => {
 
   const handleChange = (optionValue) => {
     const newValues = selectedValues.includes(optionValue)
-      ? selectedValues.filter(v => v !== optionValue) // Uncheck
-      : [...selectedValues, optionValue]; // Check
+      ? selectedValues.filter(v => v !== optionValue) 
+      : [...selectedValues, optionValue];
 
     onChange(newValues);
   };
