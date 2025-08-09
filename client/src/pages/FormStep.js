@@ -1,5 +1,3 @@
-// In FormStep.js
-
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import FormData from "../components/FormData";
@@ -20,7 +18,7 @@ const FormStep = () => {
   const [formValues, setFormValues] = useState({});
   const [formDraftValue, setFormDraftValue] = useState({});
 
-  const userId = "user123"; // Keeping userId consistent
+  const userId = "user123";
   const currentStepIndex = parseInt(stepId) - 1;
 
   useEffect(() => {
@@ -38,22 +36,18 @@ const FormStep = () => {
         const stepIndex = parseInt(stepId) - 1;
         if (fetchedFormData?.steps?.[stepIndex]) {
           setCurrentStepData(fetchedFormData.steps[stepIndex]);
-          // Initialize formValues from fetched data or previous state if available
-          // (This part might need more sophisticated hydration logic for draft values if applicable)
         } else {
-          // Handle invalid stepId, e.g., redirect to first step or error page
           navigate(`/service/${serviceId}/step/1`);
         }
       } catch (error) {
         console.error("Error fetching form data:", error);
-        // Handle error, e.g., show an error message
       } finally {
         setLoading(false);
       }
     };
 
     fetchAllData();
-  }, [serviceId, stepId, navigate]); // Depend on serviceId and stepId for re-fetch
+  }, [serviceId, stepId, navigate]);
 
 
   useEffect(() => {
@@ -64,7 +58,6 @@ const FormStep = () => {
         const data = await response.data;
         setFormDraftValue(data);
         
-        // Initialize form values with draft data for current step if available
         if (data?.steps?.[currentStepIndex]) {
           setFormValues(prev => ({
             ...prev,
@@ -91,15 +84,11 @@ const FormStep = () => {
     if (prevStepId >= 1) {
       navigate(`/service/${serviceId}/step/${prevStepId}`);
     } else {
-      // Handle going back from the first step, e.g., to a service selection page
       console.log("Already on the first step.");
     }
   };
 
   const handleNext = (responseData) => {
-    // If responseData is provided, it means a POST/PATCH request was successful
-    // You might want to store this responseData or parts of it in formValues
-    // if it contains data needed for subsequent steps (e.g., a doc_id).
     console.log("Proceeding to next step with response data:", responseData);
 
     const nextStepId = parseInt(stepId) + 1;
@@ -107,18 +96,16 @@ const FormStep = () => {
       navigate(`/service/${serviceId}/step/${nextStepId}`);
     } else {
       console.log("No next step found. End of form.");
-      // Potentially navigate to a summary/success page or handle final submission
     }
   };
 
   const handleSubmit = (responseData) => {
     console.log("Final form submitted with response:", responseData);
-    // Handle final submission, e.g., show success message, redirect to confirmation page
     alert("Form Submitted Successfully!");
   };
 
   const handleReset = () => {
-    setFormValues({}); // Clear all form values
+    setFormValues({}); 
     alert("Form has been reset!");
   };
 

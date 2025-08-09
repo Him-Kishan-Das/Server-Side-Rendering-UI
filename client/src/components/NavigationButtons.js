@@ -36,7 +36,7 @@ const NavigationButtons = ({ stepData, navButtons, formValues, onBack, onSubmit,
                   onSubmit={onSubmit}
                   onProceed={onProceed}
                   serviceId={serviceId}
-                  currentStepFields={currentStepFields} // Passing currentStepFields
+                  currentStepFields={currentStepFields} 
                 />
               );
             case "form_reset":
