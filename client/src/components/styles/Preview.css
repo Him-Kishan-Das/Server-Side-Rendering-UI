@@ -1,0 +1,106 @@
+.preview-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .preview-header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+    text-align: center;
+  }
+  
+  .preview-intro {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #666;
+    text-align: center;
+  }
+  
+  .preview-section {
+    margin-bottom: 25px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #444;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+  }
+  
+  .section-fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .field-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  
+  .field-label {
+    font-weight: 600;
+    color: #555;
+    width: 40%;
+  }
+  
+  .field-value {
+    color: #333;
+    width: 55%;
+    text-align: right;
+  }
+  
+  .enclosure-preview {
+    width: 55%;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .enclosure-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    object-fit: cover;
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .btn-back {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  .btn-pdf {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .btn-proceed {
+    background-color: #2ecc71;
+    color: white;
+  }

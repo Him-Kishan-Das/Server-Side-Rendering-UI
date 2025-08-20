@@ -21,7 +21,8 @@ const NavigationButtons = ({ stepData, navButtons, formValues, onBack, onSubmit,
             key: index,
             button,
             formValues,
-            isLocked: isCurrentStepLocked, // Using the isCurrentStepLocked prop
+            isLocked: isCurrentStepLocked, 
+            
             draftValue: stepData?.isLock?.draftValueCheck
               ? formValues?.[stepData.isLock.draftValueCheck]
               : null
