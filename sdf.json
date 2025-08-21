@@ -1,0 +1,687 @@
+{
+    "_id": {
+      "$oid": "687d24a45e74b7d35703bad3"
+    },
+    "service_id": 100136,
+    "type": "stepper",
+    "formName": "Issuance of Migration Certificate",
+    "description": "Directorate of Secondary Education",
+    "endPoint": {
+      "type": "GET",
+      "allowUriEdit": true,
+      "gettUri": "http://localhost:5000/api/application"
+    },
+    "steps": [
+      {
+        "isLock": {
+          "initVale": false
+        },
+        "header": "AHSEC Registration Details",
+        "type": "step",
+        "intro": "Provide your registration number, academic year, final exam year, and related details",
+        "stepType": "FormPage",
+        "navigationButtons": [
+          {
+            "enLabel": "Back",
+            "type": "system_back"
+          },
+          {
+            "enLabel": "Proceed",
+            "type": "post_nav_btn",
+            "endpoint": {
+              "type": "POST",
+              "postUri": "http://localhost:5000/api/application/save-step/1",
+              "allowUriEdit": true,
+              "notIncludeKeys": [
+                "candidateName"
+              ]
+            }
+          }
+        ],
+        "formData": [
+          {
+            "label": {
+              "en": "AHSEC Registration Session",
+              "as": "এ. এইচ. এছ. ই .চি. পঞ্জীয়ন বৰ্ষ"
+            },
+            "type": "dropdown",
+            "endpoint": {
+              "type": "GET",
+              "getUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/academics/sessions?no_of_session=37"
+            },
+            "variable": "ahsec_reg_session",
+            "isRequired": true,
+            "componentMessage": "Texting ui componentMessage",
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "AHSEC Registration No of the Student",
+              "as": "এ. এইচ. এছ. ই .চি. পঞ্জীয়ন বৰ্ষ"
+            },
+            "type": "textfield",
+            "keyboardType": "numeric",
+            "variable": "ahsec_reg_no",
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "Name of the Student",
+              "as": "এ. এইচ. এছ. ই .চি. পঞ্জীয়ন বৰ্ষ"
+            },
+            "type": "textView",
+            "endpoint": {
+              "type": "GET",
+              "getUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/migrations/students/details?ahsec_reg_session=ahsec_reg_session_&ahsec_reg_no=ahsec_reg_no_",
+              "allowUriEdit": true,
+              "fillData": [
+                "candidateName"
+              ]
+            },
+            "variable": "candidateName",
+            "isRequired": true,
+            "isReadOnly": true,
+            "dependenciesMet": false,
+            "dependencies": [
+              "ahsec_reg_no",
+              "ahsec_reg_session"
+            ]
+          },
+          {
+            "label": {
+              "en": "Year of Appearing in H.S. Final Year Exam",
+              "as": "এইচ.এছ. অন্তিম বৰ্ষৰ পৰীক্ষাত অৱতীৰ্ণ"
+            },
+            "type": "dropdown",
+            "endpoint": {
+              "type": "GET",
+              "getUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/academics/years?no_of_year=37"
+            },
+            "variable": "ahsec_yearofpassing",
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "Valid H.S. Final Year Examination Roll",
+              "as": "বৈধ এইচ.এছ. চূড়ান্ত বৰ্ষৰ পৰীক্ষা ৰোল"
+            },
+            "type": "textfield",
+            "variable": "ahsec_admit_roll",
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "Valid H.S. Final Year Examination Number",
+              "as": "বৈধ এইচ.এছ. চূড়ান্ত বৰ্ষৰ পৰীক্ষা ৰোল"
+            },
+            "type": "textfield",
+            "variable": "ahsec_admit_no",
+            "isRequired": true,
+            "validation": "default"
+          }
+        ]
+      },
+      {
+        "isLock": {
+          "initVale": true,
+          "draftValueCheck": "ahsec_admit_no"
+        },
+        "type": "step",
+        "header": "Applicant Details",
+        "stepType": "FormPage",
+        "intro": "Enter your name and contact details for future communication about your application.",
+        "navigationButtons": [
+          {
+            "enLabel": "Back",
+            "type": "json_back"
+          },
+          {
+            "enLabel": "Proceed",
+            "type": "post_nav_btn",
+            "endpoint": {
+              "type": "POST",
+              "postUri": "http://localhost:5000/api/application/save-step/2",
+              "requiredKeys": [
+                "ahsec_reg_session",
+                "ahsec_reg_no",
+                "ahsec_admit_no",
+                "ahsec_admit_roll",
+                "ahsec_yearofpassing",
+                "ahsec_inst_name"
+              ],
+              "allowUriEdit": true
+            }
+          }
+        ],
+        "formData": [
+          {
+            "label": {
+              "en": "Name of the institition",
+              "as": "Institution ৰ নাম"
+            },
+            "type": "textView",
+            "endpoint": {
+              "type": "GET",
+              "getUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/migrations/students/verify?ahsec_reg_session=ahsec_reg_session_&ahsec_reg_no=ahsec_reg_no_&ahsec_yearofpassing=ahsec_yearofpassing_&ahsec_admit_no=ahsec_admit_no_&ahsec_admit_roll=ahsec_admit_roll_&applied_by=applied_by_",
+              "fillData": [
+                "ahsec_inst_name",
+                "applicant_name",
+                "father_name",
+                "mother_name",
+                "applicant_gender"
+              ],
+              "allowUriEdit": true
+            },
+            "variable": "ahsec_inst_name",
+            "isRequired": true,
+            "isReadOnly": true,
+            "validation": "default",
+            "dependenciesMet": true,
+            "dependencies": [
+              "ahsec_reg_no",
+              "ahsec_reg_session",
+              "ahsec_yearofpassing",
+              "ahsec_admit_no",
+              "ahsec_admit_roll"
+            ]
+          },
+          {
+            "label": {
+              "en": "Applicant's Name",
+              "as": "আবেদনকাৰীৰ নাম"
+            },
+            "type": "textfield",
+            "variable": "applicant_name",
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "Applicant's Gender",
+              "as": "এইচ.এছ. অন্তিম বৰ্ষৰ পৰীক্ষাত অৱতীৰ্ণ"
+            },
+            "type": "dropdown",
+            "endpoint": {
+              "type": "GET",
+              "getUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/genders"
+            },
+            "variable": "applicant_gender",
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "Father's Name",
+              "as": "পিতৃৰ নাম"
+            },
+            "type": "textfield",
+            "variable": "father_name",
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "Mother's Name",
+              "as": "মাতৃৰ নাম"
+            },
+            "type": "textfield",
+            "variable": "mother_name",
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "E-Mail",
+              "as": "দুৰভাষ ( মবাইল )"
+            },
+            "type": "textfield",
+            "variable": "email",
+            "isRequired": true,
+            "validation": "email"
+          },
+          {
+            "label": {
+              "en": "Phone number",
+              "as": "দুৰভাষ ( মবাইল )"
+            },
+            "type": "phoneField",
+            "variable": "mobile",
+            "isReadOnly": true
+          }
+        ]
+      },
+      {
+        "isLock": {
+          "initVale": true,
+          "draftValueCheck": "email"
+        },
+        "type": "steps",
+        "header": "Address & Delivery",
+        "stepType": "FormPage",
+        "intro": "Enter your address and choose how you want to receive your registration card.",
+        "navigationButtons": [
+          {
+            "enLabel": "Back",
+            "type": "json_back"
+          },
+          {
+            "enLabel": "Proceed",
+            "type": "post_nav_btn",
+            "endpoint": {
+              "type": "POST",
+              "postUri": "http://localhost:5000/api/application/save-step/3",
+              "allowUriEdit": true
+            }
+          }
+        ],
+        "formData": [
+          {
+            "label": {
+              "en": "Complete Address",
+              "as": "সম্পূৰ্ণ ঠিকনা"
+            },
+            "type": "textfield",
+            "variable": "comp_permanent_address",
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "State",
+              "as": "ৰাজ্য"
+            },
+            "type": "dropdown",
+            "endpoint": {
+              "type": "GET",
+              "getUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/states"
+            },
+            "variable": "pa_state",
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "District",
+              "as": "এইচ.এছ. অন্তিম বৰ্ষৰ পৰীক্ষাত অৱতীৰ্ণ"
+            },
+            "type": "dependencyDropdown",
+            "dependencyType": "dependentDropdown",
+            "dependencies": [
+              "pa_state"
+            ],
+            "endpoint": {
+              "type": "GET",
+              "getUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/states/pa_state_/districts",
+              "allowUriEdit": true
+            },
+            "variable": "pa_district",
+            "dependenciesMet": false,
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "Pincode",
+              "as": "পিনকোড"
+            },
+            "type": "textfield",
+            "variable": "pa_pincode",
+            "isRequired": true,
+            "validation": "pincode",
+            "keyboardType": "numeric"
+          },
+          {
+            "type": "singleBoolRadio",
+            "label": {
+              "en": "Same as Permanent ",
+              "as": "Same as Permanent Address"
+            },
+            "onChanged": "onDuplicate",
+            "mapOptions": [
+              {
+                "Yes": "true"
+              },
+              {
+                "No": "false"
+              }
+            ],
+            "onDuplicate": {
+              "comp_permanent_address": "comp_postal_address",
+              "pa_state": "pos_state",
+              "pa_district": "pos_district",
+              "pa_pincode": "pos_pincode"
+            },
+            "variable": "is_pp_address_same"
+          },
+          {
+            "enLabel": "Complete Address",
+            "asLabel": "সম্পূৰ্ণ ঠিকনা",
+            "type": "textfield",
+            "variable": "comp_postal_address",
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "State",
+              "as": "ৰাজ্য"
+            },
+            "type": "dropdown",
+            "endpoint": {
+              "type": "GET",
+              "getUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/states"
+            },
+            "variable": "pos_state",
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "District",
+              "as": "এইচ.এছ. অন্তিম বৰ্ষৰ পৰীক্ষাত অৱতীৰ্ণ"
+            },
+            "type": "dependencyDropdown",
+            "dependencyType": "dependentDropdown",
+            "dependencies": [
+              "pos_state"
+            ],
+            "dependenciesMet": false,
+            "endpoint": {
+              "type": "GET",
+              "getUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/states/pos_state_/districts",
+              "allowUriEdit": true
+            },
+            "variable": "pos_district",
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "Pincode",
+              "as": "পিনকোড"
+            },
+            "type": "textfield",
+            "variable": "pos_pincode",
+            "isRequired": true,
+            "validation": "pincode",
+            "keyboardType": "numeric"
+          },
+          {
+            "type": "checkBoxRadio",
+            "isRequired": false,
+            "label": {
+              "en": "Delivery Preference for receiving of the Migration Certificate",
+              "as": "পিনকোড"
+            },
+            "mapOptions": [
+              {
+                "FROM AHSEC COUNTER": "Pick Up in Person at AHSEC Office You need to bring your Registration Certificate when you go to collect your Migration certificate"
+              },
+              {
+                "IN MY POSTAL ADDRESS": "Request by Post: You need to send your Registration Card to AHSEC by post receive your Migration Certificate by postal"
+              }
+            ],
+            "variable": "postal"
+          }
+        ]
+      },
+      {
+        "isLock": {
+          "initVale": true,
+          "draftValueCheck": "pos_pincode"
+        },
+        "type": "steps",
+        "header": "Planned Field of Study",
+        "stepType": "FormPage",
+        "intro": "Provide details about the course you plan to study and the institution to which you are applying",
+        "navigationButtons": [
+          {
+            "enLabel": "Back",
+            "type": "json_back"
+          },
+          {
+            "enLabel": "Proceed",
+            "type": "post_nav_btn",
+            "endpoint": {
+              "type": "POST",
+              "postUri": "http://localhost:5000/api/application/save-step/4",
+              "allowUriEdit": true,
+              "notIncludeKeys": [
+                "is_pp_address_same"
+              ]
+            }
+          }
+        ],
+        "formData": [
+          {
+            "label": {
+              "en": "University/Board where seeking admission",
+              "as": "বিশ্ববিদ্যালয়/বৰ্ড য'ত নামভৰ্তি বিচাৰিছে"
+            },
+            "type": "textfield",
+            "variable": "board_seaking_adm",
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "label": {
+              "en": "Course name where seeking admission",
+              "as": "পাঠ্যক্ৰমৰ নাম য'ত নামভৰ্তি বিচাৰিছে"
+            },
+            "type": "textfield",
+            "variable": "course_seaking_adm",
+            "isRequired": true,
+            "validation": "default"
+          },
+          {
+            "type": "radio",
+            "label": {
+              "en": "Admission Seeking?",
+              "as": ""
+            },
+            "isRequired": false,
+            "asLabel": "আপুনি আপোনাৰ প্ৰব্ৰজন প্ৰমাণপত্ৰ কেনেকৈ লাভ কৰিব বিচাৰিব",
+            "mapOptions": [
+              {
+                "true": "Within India"
+              },
+              {
+                "false": "Outside India"
+              }
+            ],
+            "variable": "is_within_without_country"
+          },
+          {
+            "label": {
+              "en": "State in India where seeking admission",
+              "as": "ভাৰতৰ কোন ৰাজ্যত নামভৰ্তি বিচাৰিছে"
+            },
+            "type": "dependencyDropdown",
+            "dependencyType": "conditionalDropdown",
+            "endpoint": {
+              "type": "GET",
+              "getUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/states"
+            },
+            "variable": "state_seaking_adm",
+            "isRequired": true,
+            "validation": "default",
+            "dependenciesMet": false,
+            "ruleDeps": {
+              "is_within_without_country": [
+                "true"
+              ]
+            }
+          },
+          {
+            "label": {
+              "en": "Name of the Country if seeking admission abroad",
+              "as": ""
+            },
+            "type": "dependencyDropdown",
+            "dependencyType": "conditionalDropdown",
+            "endpoint": {
+              "type": "GET",
+              "getUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/countries"
+            },
+            "variable": "ahsec_country_seeking",
+            "isRequired": false,
+            "validation": "default",
+            "dependenciesMet": false,
+            "ruleDeps": {
+              "is_within_without_country": [
+                "false"
+              ]
+            }
+          },
+          {
+            "label": {
+              "en": "Describe Reason for Seeking Migration",
+              "as": "প্ৰব্ৰজন বিচৰাৰ কাৰণ বৰ্ণনা কৰা"
+            },
+            "type": "textfield",
+            "variable": "reason_seaking_adm",
+            "isRequired": true,
+            "validation": "default"
+          }
+        ]
+      },
+      {
+        "isLock": {
+          "initVale": true,
+          "draftValueCheck": "reason_seaking_adm"
+        },
+        "type": "steps",
+        "header": "Documents & Declaration",
+        "stepType": "FormPage",
+        "intro": "Upload the necessary documents and confirm that all the information is accurate",
+        "navigationButtons": [
+          {
+            "enLabel": "Back",
+            "type": "json_back"
+          },
+          {
+            "enLabel": "Proceed",
+            "type": "post_nav_btn",
+            "endpoint": {
+              "type": "POST",
+              "allowUriEdit": true,
+              "postUri": "http://localhost:5000/api/application/save-step/5"
+            }
+          }
+        ],
+        "formData": [
+          {
+            "type": "enclosure",
+            "label": {
+              "en": "1. Passport size photograph ",
+              "as": "1. আপুনি Passport size photograph"
+            },
+            "docType": "image/jpeg",
+            "enclosures_header": "enclosures",
+            "encKeyType": "photo_of_the_candidate_type",
+            "encKeyValue": "Photo of the Candidate Type",
+            "variable": "photo_of_the_candidate",
+            "onChanged": "default-encloserUpload",
+            "isRequired": true,
+            "fileSize": 200000,
+            "previewUrl": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/enclosure?file_path",
+            "endpoint": {
+              "type": "POST",
+              "postUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/migrations/document_id/documents"
+            }
+          },
+          {
+            "type": "enclosure",
+            "label": {
+              "en": "2. Candiate Signature",
+              "as": "2. আপুনি Signatuture"
+            },
+            "docType": "image/jpeg",
+            "enclosures_header": "enclosures",
+            "encKeyType": "candidate_sign_type",
+            "encKeyValue": "Applicant Sign",
+            "variable": "candidate_sign",
+            "onChanged": "default-encloserUpload",
+            "isRequired": true,
+            "fileSize": 200000,
+            "previewUrl": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/enclosure?file_path",
+            "endpoint": {
+              "type": "POST",
+              "postUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/migrations/document_id/documents"
+            }
+          },
+          {
+            "type": "enclosure",
+            "label": {
+              "en": "3. H.S. Final Year Marksheet",
+              "as": "3. আপুনি H.S. Final Year Marksheet"
+            },
+            "docType": "application/pdf",
+            "enclosures_header": "enclosures",
+            "encKeyType": "hs_marksheet_type",
+            "encKeyValue": "HS Marksheet",
+            "variable": "hs_marksheet",
+            "onChanged": "default-encloserUpload",
+            "isRequired": true,
+            "fileSize": 200400,
+            "previewUrl": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/enclosure?file_path",
+            "endpoint": {
+              "type": "POST",
+              "postUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/migrations/document_id/documents"
+            }
+          },
+          {
+            "type": "enclosure",
+            "label": {
+              "en": "4. HS Registration Certificate",
+              "as": "4. আপুনি  HS Registration Certificate"
+            },
+            "docType": "application/pdf",
+            "encKeyType": "hs_reg_card_type",
+            "encKeyValue": "HS Registration Card",
+            "variable": "hs_reg_card",
+            "enclosures_header": "enclosures",
+            "onChanged": "default-encloserUpload",
+            "isRequired": true,
+            "fileSize": 200300,
+            "previewUrl": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/enclosure?file_path",
+            "endpoint": {
+              "type": "POST",
+              "postUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/migrations/document_id/documents"
+            }
+          }
+        ]
+      },
+      {
+        "isLock": {
+          "initVale": true,
+          "draftValueCheck": "hs_reg_card"
+        },
+        "type": "steps",
+        "header": "Application Preview",
+        "stepType": "Preview",
+        "intro": "Review your application. If needed, you can go back and make  changes",
+        "endpoint": {
+          "type": "GET",
+          "getUri": "http://localhost:5000/api/forms/service/100136"
+        }
+      },
+      {
+        "isLock": {
+          "initVale": true
+        },
+        "type": "steps",
+        "header": "Fee Payment",
+        "stepType": "Payment",
+        "intro": "A convenience fee of Rs. 10 and a non-refundable user charge of Rs. 600 will apply",
+        "endpoint": {
+          "type": "GET",
+          "getUri": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/migrations/doc_id/payments/initial",
+          "paymentValidate": "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/migrations/doc_id/payments/verify-submission"
+        }
+      }
+    ]
+  }

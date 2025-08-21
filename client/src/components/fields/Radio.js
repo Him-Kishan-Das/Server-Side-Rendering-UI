@@ -3,31 +3,28 @@ import PropTypes from "prop-types";
 
 const Radio = ({ field, value, onChange }) => {
   const handleChange = (selectedValue) => {
-    // Convert to boolean if the value is 'true'/'false'
-    const newValue = selectedValue === "true" ? true :
-                    selectedValue === "false" ? false :
-                    selectedValue;
-    onChange(newValue);
+    onChange(selectedValue);
   };
 
   return (
     <div className="radio-group">
       {field.mapOptions.map((option, index) => {
-        const optionText = Object.keys(option)[0];
-        const optionValue = option[optionText];
-        
+        const storedValue = Object.keys(option)[0]; 
+        const displayLabel = option[storedValue];
+
         return (
           <label key={index} className="radio-option">
             <input
               type="radio"
               name={field.variable}
-              value={optionValue}
-              checked={value === optionValue || value === optionValue.toString()}
-              onChange={() => handleChange(optionValue)}
+              value={storedValue}
+              checked={value === storedValue}
+              onChange={() => handleChange(storedValue)}
               required={field.isRequired}
               className="radio-input"
             />
-            <span className="radio-label">{optionText}</span>
+            {/* Add a non-breaking space here */}
+            &nbsp;<span className="radio-label">{displayLabel}</span> 
           </label>
         );
       })}

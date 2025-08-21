@@ -2,23 +2,37 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const DependencyDropdown = ({ field, value, onChange, formValues }) => {
-    // Define the bearer token directly within this component.
-    // NOTE: For security and maintainability, it is generally recommended to pass this as a prop from a higher-level component.
     const bearerToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NTU2Njc2MzksImV4cCI6MTc1NjI3MjQzOSwidHlwZSI6ImFjY2VzcyIsImRldmljZV9pZCI6IjY5NzAyMDQwMWJlYzMwYTcwMzgxNzk2MTU1N2YwMzc4NjRhMjU0MTVlMmQ1YjEzN2ZlODA2NmUyOTM2NjY1YTMiLCJzdWIiOiI2N2ExZDMwMGM2MzkyZjk4ODkwNWY4OTIiLCJrZXkiOiJlRmh6VVFVemNVeXc5eVVhTmciLCJkYXRhIjp7Im5hbWUiOiIiLCJlbWFpbCI6IiIsIm1vYmlsZSI6Ijc2MzYwNTQwNzQiLCJnZW5kZXIiOiJNIiwiZG9iIjoiMTcvMDEvMjAwMCIsInVzZXJuYW1lIjoianlvdGlta2FzaHlhcCIsInVzZXJJZCI6IjY3YTFkMzAwYzYzOTJmOTg4OTA1Zjg5MiIsInVzZXJUeXBlIjoidXNlciIsImlzTG9nZ2VkSW4iOnRydWUsInVzZXJfdXVpZCI6IiIsInNld2FzZXR1X3VzZXJpZCI6IjgxSFM3Si1TUy0yMDI1LTU0MDc0LTE3NDg1MDk5NzczMzAiLCJteWFwcGxzX21vYmlsZSI6Ijc2MzYwNTQwNzQiLCJsb2dpbkRldmljZVR5cGUiOiJXIn0sImNhZGRyZXNzIjoiTVRreUxqRTJPQzR4TVM0M05BPT0ifQ.GA8MB1IrYJmAXSkMpMtYWbDTkyVCzs4B-PEgSuhpbXI";
-
+    
     const [options, setOptions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        // Clear options when dependencies change to avoid displaying old data
-        setOptions([]);
+    // This function will check if the dependencies are met, including ruleDeps
+    const checkDependenciesMet = () => {
+        if (!field || !formValues) {
+            return false;
+        }
 
-        // Check if all dependencies are met
-        const allDependenciesMet = field.dependencies.every(dep => formValues && formValues[dep]);
+        // Check for basic dependencies
+        const allDependenciesHaveValues = (field.dependencies || []).every(dep => formValues[dep]);
         
-        if (allDependenciesMet && field.endpoint && bearerToken) {
+        // Check for rule-based dependencies
+        const ruleDependenciesMet = Object.keys(field.ruleDeps || {}).every(depKey => {
+            const requiredValues = field.ruleDeps[depKey];
+            const currentValue = formValues[depKey];
+            return requiredValues.includes(currentValue);
+        });
+
+        return allDependenciesHaveValues && ruleDependenciesMet;
+    };
+
+    useEffect(() => {
+        const dependenciesMet = checkDependenciesMet();
+        if (dependenciesMet && field.endpoint) {
             fetchOptions();
+        } else {
+            setOptions([]); // Clear options if dependencies are not met
         }
     }, [formValues, field, bearerToken]);
 
@@ -28,14 +42,18 @@ const DependencyDropdown = ({ field, value, onChange, formValues }) => {
             setError(null);
             let uri = field.endpoint.getUri;
 
-            field.dependencies.forEach(dep => {
+            // Replace simple dependencies in the URI
+            (field.dependencies || []).forEach(dep => {
                 const depValue = formValues[dep];
-                if (depValue) {
-                    uri = uri.replace(`${dep}_`, depValue);
-                }
+                uri = uri.replace(`${dep}_`, depValue || '');
+            });
+            
+            // Replace rule-based dependencies in the URI (if any)
+            Object.keys(field.ruleDeps || {}).forEach(depKey => {
+                const depValue = formValues[depKey];
+                uri = uri.replace(`${depKey}_`, depValue || '');
             });
 
-            // Make sure the URI is fully constructed
             if (uri.includes('_')) {
                 console.error("URI contains unreplaced placeholders:", uri);
                 setError("Failed to load options. Missing dependency values.");
@@ -69,6 +87,7 @@ const DependencyDropdown = ({ field, value, onChange, formValues }) => {
         }
     };
 
+    const isDependenciesMet = checkDependenciesMet();
     return (
         <select
             name={field.variable}
@@ -76,7 +95,7 @@ const DependencyDropdown = ({ field, value, onChange, formValues }) => {
             required={field.isRequired === true}
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
-            disabled={loading || !field.dependencies.every(dep => formValues && formValues[dep])}
+            disabled={loading || !isDependenciesMet}
         >
             <option value="">
               {loading ? "Loading..." : "Select an option"}
