@@ -1,12 +1,12 @@
 import React from "react";
 
-const SingleBoolRadio = ({ field, value, onChange, formValues }) => {
+const SingleBoolRadio = ({ field, value, onChange, formValues, onFieldChange }) => {
     const handleChange = (val) => {
         onChange(val);
 
-        if(val == "true" && field.onDuplicate){
+        if(val === "true" && field.onDuplicate){
             Object.entries(field.onDuplicate).forEach(([src, dest]) => {
-                onChange(formValues[src], dest);
+                onFieldChange(dest, formValues[src]); // Correct way to update another field
             });
         }
     };
@@ -18,16 +18,16 @@ const SingleBoolRadio = ({ field, value, onChange, formValues }) => {
                 const val = option[key];
                 return (
                     <label key={val}>
-            <input
-              type="radio"
-              name={field.variable}
-              value={val}
-              checked={value === val}
-              onChange={() => handleChange(val)}
-              required={field.isRequired}
-            />
-            {key}
-          </label>
+                        <input
+                            type="radio"
+                            name={field.variable}
+                            value={val}
+                            checked={value === val}
+                            onChange={() => handleChange(val)}
+                            required={field.isRequired}
+                        />
+                        {key}
+                    </label>
                 );
             })}
         </div>

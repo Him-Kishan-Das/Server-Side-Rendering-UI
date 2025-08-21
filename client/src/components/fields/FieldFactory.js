@@ -9,7 +9,7 @@ import CheckBoxRadio from "./CheckBoxRadio";
 import Radio from "./Radio";
 import Enclosure from "./Enclosure";
 
-const FieldFactory = ({ field, value, onChange, formData }) => {
+const FieldFactory = ({ field, value, onChange, formValues, onFieldChange }) => { // ADD formValues and onFieldChange
     useEffect(() => {
         console.log(value);
     })
@@ -23,9 +23,9 @@ const FieldFactory = ({ field, value, onChange, formData }) => {
         case 'dropdown':
             return <DropDown field={field} value={value} onChange={onChange} />
         case 'dependencyDropdown':
-            return <DependencyDropdown field={field} value={value} onChange={onChange} formValues={formData} />
+            return <DependencyDropdown field={field} value={value} onChange={onChange} formValues={formValues} /> // Passes formValues
         case 'singleBoolRadio':
-            return <SingleBoolRadio field={field} value={value} onChange={onChange} />
+            return <SingleBoolRadio field={field} value={value} onChange={onChange} formValues={formValues} onFieldChange={onFieldChange} /> // Passes formValues and onFieldChange
         case 'checkBoxRadio':
             return <CheckBoxRadio field={field} value={value} onChange={onChange} />;
         case 'radio':

@@ -33,7 +33,8 @@ const FormData = ({ stepData, formFields, formValues, onFieldChange, formDraftVa
                   field={field} 
                   value={mergedValues[field.variable]}
                   onChange={(value) => onFieldChange(field.variable, value)}
-                  formData={mergedValues} // Pass the merged form values here
+                  formValues={mergedValues} 
+                  onFieldChange={onFieldChange} 
                 />
               </div>
             ))}
