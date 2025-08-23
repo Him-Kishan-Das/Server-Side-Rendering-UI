@@ -3,13 +3,16 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import './styles/Preview.css';
 
-const Preview = ({ endpoint, formStructure }) => {
-  const [data, setData] = useState(null);
+const Preview = ({ endpoint, formValues, formStructure }) => {
+  const [apiData, setApiData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // This useEffect fetches data from the endpoint specified in the form structure.
+  // The data fetched here is logged for debugging, but the component will render
+  // using the 'formValues' prop for user-entered data primarily.
   useEffect(() => {
-    const fetchPreviewData = async () => {
+    const fetchPreviewDataFromApi = async () => {
       if (!endpoint?.getUri) {
         setError('No API endpoint provided for preview.');
         setLoading(false);
@@ -19,34 +22,42 @@ const Preview = ({ endpoint, formStructure }) => {
       try {
         setLoading(true);
         setError(null);
-        // The API call is made without the Authorization header.
         const response = await axios.get(endpoint.getUri);
         
         // --- CONSOLE LOG THE API RESPONSE HERE ---
-        console.log("API Response for Preview Data:", response.data);
+        console.log("API Response for Preview Data (from endpoint):", response.data);
         // ------------------------------------------
 
-        setData(response.data);
+        setApiData(response.data); // Store API response if needed
       } catch (err) {
-        setError(err.message || 'Failed to load preview data');
-        console.error('Preview fetch error:', err);
+        setError(err.message || 'Failed to load preview data from API');
+        console.error('Preview fetch error from API:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPreviewData();
+    fetchPreviewDataFromApi();
   }, [endpoint]);
 
-  const getLabel = (variable) => {
-    if (!formStructure || !formStructure.steps) return variable;
+  // Helper to get the field definition from the form structure
+  const getFieldDefinition = (variable) => {
+    if (!formStructure || !formStructure.steps) return null;
     for (const step of formStructure.steps) {
       if (step.formData) {
         const field = step.formData.find(f => f.variable === variable);
-        if (field && field.label?.en) {
-          return field.label.en;
+        if (field) {
+          return field;
         }
       }
+    }
+    return null;
+  };
+
+  const getLabel = (variable) => {
+    const field = getFieldDefinition(variable);
+    if (field && field.label?.en) {
+      return field.label.en;
     }
     return variable.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
@@ -62,25 +73,20 @@ const Preview = ({ endpoint, formStructure }) => {
       return value === 'true' ? 'Within India' : 'Outside India';
     }
     
-    if (formStructure && formStructure.steps) {
-      for (const step of formStructure.steps) {
-          if (step.formData) {
-              const field = step.formData.find(f => f.variable === variable);
-              if (field?.type === 'dropdown' || field?.type === 'dependencyDropdown') {
-                  const selectedOption = (field.options || []).find(opt => opt.value === value) || 
-                                         (field.mapOptions || []).find(opt => Object.keys(opt)[0] === value);
-                  if (selectedOption) {
-                      return selectedOption.label?.en || Object.values(selectedOption)[0];
-                  }
-              }
-          }
-      }
+    const field = getFieldDefinition(variable);
+    if (field?.type === 'dropdown' || field?.type === 'dependencyDropdown') {
+        const selectedOption = (field.options || []).find(opt => opt.value === value) || 
+                               (field.mapOptions || []).find(opt => Object.keys(opt)[0] === value);
+        if (selectedOption) {
+            return selectedOption.label?.en || Object.values(selectedOption)[0];
+        }
     }
 
     return value || 'N/A';
   };
 
-  if (loading) {
+  // If initial loading of form structure or form values is not complete
+  if (loading && !formStructure) { 
     return (
       <div className="preview-loading">
         <div className="spinner"></div>
@@ -89,7 +95,8 @@ const Preview = ({ endpoint, formStructure }) => {
     );
   }
 
-  if (error) {
+  // If there's an error from the API call, and no formValues to display, show error.
+  if (error && Object.keys(formValues).length === 0) { 
     return (
       <div className="preview-error">
         <h2>Error Loading Preview</h2>
@@ -99,8 +106,7 @@ const Preview = ({ endpoint, formStructure }) => {
     );
   }
 
-  const formDataFromApi = data?.data || {};
-
+  // Group fields by step headers from the formStructure
   const groupedFields = {};
   if (formStructure && formStructure.steps) {
       formStructure.steps.forEach(step => {
@@ -108,6 +114,15 @@ const Preview = ({ endpoint, formStructure }) => {
           groupedFields[step.header] = step.formData.map(field => field.variable);
         }
       });
+  }
+
+  // If no form values are available, and no API data for fallback, show message
+  if (Object.keys(formValues).length === 0 && !apiData) {
+      return (
+          <div className="preview-empty">
+              <p>No application data available to preview.</p>
+          </div>
+      );
   }
 
   return (
@@ -122,19 +137,24 @@ const Preview = ({ endpoint, formStructure }) => {
           <h3>{header}</h3>
           {groupedFields[header].map((variable, fieldIndex) => {
             const label = getLabel(variable);
-            const value = formDataFromApi[variable];
+            // Prioritize formValues, then fall back to apiData if available
+            const value = formValues[variable] !== undefined ? formValues[variable] : apiData?.data?.[variable];
             const formatted = formatValue(variable, value);
+            const fieldDefinition = getFieldDefinition(variable); // Get the full field definition
 
-            if (variable === 'photo_of_the_candidate' || variable === 'candidate_sign' || 
-                variable === 'hs_marksheet' || variable === 'hs_reg_card') {
-                const docPath = formDataFromApi.enclosures?.[variable];
-                const previewUrlBase = "https://api.sewasetu.assam.statedatacenter.in/ahsec/v1/enclosure?file_path=";
+            // Special handling for enclosure (documents) fields
+            if (fieldDefinition?.type === 'enclosure') {
+                // Check in formValues first, then in apiData's enclosures
+                const docPath = formValues[variable] || apiData?.data?.enclosures?.[variable]; 
+                
+                // Use the previewUrl from the field definition
+                const previewUrlBase = fieldDefinition.previewUrl;
 
                 return (
                     <div key={fieldIndex} className="preview-row document-item">
                         <span className="preview-label">{label}:</span>
-                        {docPath ? (
-                            <a href={`${previewUrlBase}${docPath}`} target="_blank" rel="noopener noreferrer" className="document-link">
+                        {docPath && previewUrlBase ? (
+                            <a href={`${previewUrlBase}=${docPath}`} target="_blank" rel="noopener noreferrer" className="document-link">
                                 View Document
                             </a>
                         ) : (
@@ -144,6 +164,7 @@ const Preview = ({ endpoint, formStructure }) => {
                 );
             }
 
+            // Do not display regular fields that are empty or have no value
             if (value === undefined || value === null || value === '') {
                 return null;
             }
@@ -168,8 +189,9 @@ const Preview = ({ endpoint, formStructure }) => {
 
 Preview.propTypes = {
   endpoint: PropTypes.shape({
-    getUri: PropTypes.string.isRequired,
-  }).isRequired,
+    getUri: PropTypes.string, 
+  }),
+  formValues: PropTypes.object.isRequired,
   formStructure: PropTypes.object.isRequired,
 };
 

@@ -144,7 +144,11 @@ const FormStep = () => {
             />
           )}
           {currentStepData.stepType === "Preview" && (
-            <Preview stepData={currentStepData} />
+            <Preview 
+            endpoint={currentStepData.endpoint} 
+            formValues={formValues} 
+            formStructure={formData} 
+          />
           )}
           {currentStepData.stepType === "Payment" && (
             <Payment stepData={currentStepData} />
