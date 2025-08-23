@@ -19,7 +19,7 @@ const FieldFactory = ({ field, value, onChange, formValues, onFieldChange }) => 
         case 'phoneField':
             return <PhoneField field={field} value={value} onChange={onChange} />
         case 'textView':
-            return <TextView field={field} value={value} />
+            return <TextView field={field} value={value} formValues={formValues} /> 
         case 'dropdown':
             return <DropDown field={field} value={value} onChange={onChange} />
         case 'dependencyDropdown':
