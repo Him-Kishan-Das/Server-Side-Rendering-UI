@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { useNavigate, useParams } from 'react-router-dom'; // Add these imports
 import './styles/Preview.css';
 
 const Preview = ({ endpoint, formValues, formStructure }) => {
   const [apiData, setApiData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Get navigate function
+  const { serviceId } = useParams(); // Get serviceId from URL params
 
   // This useEffect fetches data from the endpoint specified in the form structure.
   // The data fetched here is logged for debugging, but the component will render
@@ -39,6 +42,11 @@ const Preview = ({ endpoint, formValues, formStructure }) => {
 
     fetchPreviewDataFromApi();
   }, [endpoint]);
+
+  // Handler for the Back to Edit button
+  const handleBackToEdit = () => {
+    navigate(`/service/${serviceId}/step/1`);
+  };
 
   // Helper to get the field definition from the form structure
   const getFieldDefinition = (variable) => {
@@ -180,7 +188,9 @@ const Preview = ({ endpoint, formValues, formStructure }) => {
       ))}
 
       <div className="preview-actions">
-        <button className="preview-back-button">Back to Edit</button>
+        <button className="preview-back-button" onClick={handleBackToEdit}>
+          Back to Edit
+        </button>
         <button className="preview-submit-button">Submit Application</button>
       </div>
     </div>
