@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+import fileRoutes from "./routes/fileRoutes.js";
 import formsRoutes from './routes/formsRoutes.js';
 import applicationRoutes from './routes/applicationRoutes.js';
 
@@ -17,6 +18,9 @@ app.use(express.json());
 
 app.use('/api/forms', formsRoutes);
 app.use('/api', applicationRoutes);
+
+app.use('/api/files', fileRoutes);
+app.use('/uploads', express.static("uploads"));
 
 app.get('/', (req, res) => {
     res.send("API running successfully!");
