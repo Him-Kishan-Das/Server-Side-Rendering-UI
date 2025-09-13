@@ -117,7 +117,12 @@ const PostNavBtn = ({
       onClick={handleClick}
       disabled={isLocked}
     >
-      {button.enLabel}
+                  {button?.enLabel 
+  ?? button?.lnLabel?.en 
+  ?? button?.lnLabel?.enLabel 
+  ?? (typeof button?.lnLabel === "string" ? button.lnLabel : "") 
+  ?? ""
+}
     </button>
   );
 };

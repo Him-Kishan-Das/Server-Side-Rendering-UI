@@ -128,7 +128,13 @@ const FormStep = () => {
     <div className="form-step-container">
       <div className="form-step-header">
         <h1>{formData?.formName}</h1>
-        <h2>{currentStepData.header}</h2>
+        <h2>
+  {currentStepData.header
+    ? typeof currentStepData.header === "object"
+      ? currentStepData.header.en || Object.values(currentStepData.header)[0]
+      : currentStepData.header
+    : ""}
+</h2>
         <p className="intro-text">{currentStepData.intro}</p>
       </div>
       <div className="form-content">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom"; // Add these imports
+import { useNavigate, useParams } from "react-router-dom";
 import "./styles/Preview.css";
 
 const Preview = ({ endpoint, formValues, formStructure }) => {
@@ -18,20 +18,11 @@ const Preview = ({ endpoint, formValues, formStructure }) => {
         setLoading(false);
         return;
       }
-
       try {
         setLoading(true);
         setError(null);
         const response = await axios.get(endpoint.getUri);
-
-        // --- CONSOLE LOG THE API RESPONSE HERE ---
-        console.log(
-          "API Response for Preview Data (from endpoint):",
-          response.data
-        );
-        // ------------------------------------------
-
-        setApiData(response.data); // Store API response if needed
+        setApiData(response.data);
       } catch (err) {
         setError(err.message || "Failed to load preview data from API");
         console.error("Preview fetch error from API:", err);
@@ -39,11 +30,9 @@ const Preview = ({ endpoint, formValues, formStructure }) => {
         setLoading(false);
       }
     };
-
     fetchPreviewDataFromApi();
   }, [endpoint]);
 
-  // Handler for the Back to Edit button
   const handleBackToEdit = () => {
     navigate(`/service/${serviceId}/step/1`);
   };
@@ -54,20 +43,33 @@ const Preview = ({ endpoint, formValues, formStructure }) => {
     for (const step of formStructure.steps) {
       if (step.formData) {
         const field = step.formData.find((f) => f.variable === variable);
-        if (field) {
-          return field;
-        }
+        if (field) return field;
       }
     }
     return null;
   };
 
+  // Updated getLabel for fields (inline, no utils)
   const getLabel = (variable) => {
     const field = getFieldDefinition(variable);
-    if (field && field.label?.en) {
-      return field.label.en;
+    if (field && field.label) {
+      return field.label.enLabel
+        ?? field.label.en
+        ?? field.label.asLabel
+        ?? field.label.as
+        ?? (typeof field.label === "string" ? field.label : "");
     }
     return variable.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+  };
+
+  // Updated getHeader for steps (inline, no utils)
+  const getHeader = (header) => {
+    if (!header) return "";
+    return header.en
+      ?? header.enLabel
+      ?? header.as
+      ?? header.asLabel
+      ?? (typeof header === "string" ? header : "");
   };
 
   const formatValue = (variable, value) => {
@@ -87,14 +89,27 @@ const Preview = ({ endpoint, formValues, formStructure }) => {
         (field.options || []).find((opt) => opt.value === value) ||
         (field.mapOptions || []).find((opt) => Object.keys(opt)[0] === value);
       if (selectedOption) {
-        return selectedOption.label?.en || Object.values(selectedOption)[0];
+        // In case label is also an object (old/new)
+        const label = selectedOption.label;
+        return label?.enLabel
+          ?? label?.en
+          ?? label?.asLabel
+          ?? label?.as
+          ?? (typeof label === "string" ? label : Object.values(selectedOption)[0]);
       }
     }
 
+    // If value is an object with language keys, show English or fallback
+    if (value && typeof value === "object") {
+      return value.enLabel
+        ?? value.en
+        ?? value.asLabel
+        ?? value.as
+        ?? (typeof value === "string" ? value : Object.values(value)[0]);
+    }
     return value || "N/A";
   };
 
-  // If initial loading of form structure or form values is not complete
   if (loading && !formStructure) {
     return (
       <div className="preview-loading">
@@ -104,7 +119,6 @@ const Preview = ({ endpoint, formValues, formStructure }) => {
     );
   }
 
-  // If there's an error from the API call, and no formValues to display, show error.
   if (error && Object.keys(formValues).length === 0) {
     return (
       <div className="preview-error">
@@ -120,14 +134,14 @@ const Preview = ({ endpoint, formValues, formStructure }) => {
   if (formStructure && formStructure.steps) {
     formStructure.steps.forEach((step) => {
       if (step.formData) {
-        groupedFields[step.header] = step.formData.map(
+        // Use step.header as object or string
+        groupedFields[getHeader(step.header)] = step.formData.map(
           (field) => field.variable
         );
       }
     });
   }
 
-  // If no form values are available, and no API data for fallback, show message
   if (Object.keys(formValues).length === 0 && !apiData) {
     return (
       <div className="preview-empty">
@@ -148,37 +162,28 @@ const Preview = ({ endpoint, formValues, formStructure }) => {
           <h3>{header}</h3>
           {groupedFields[header].map((variable, fieldIndex) => {
             const label = getLabel(variable);
-            // Prioritize formValues, then fall back to apiData if available
             const value =
               formValues[variable] !== undefined
                 ? formValues[variable]
                 : apiData?.data?.[variable];
             const formatted = formatValue(variable, value);
-            const fieldDefinition = getFieldDefinition(variable); // Get the full field definition
+            const fieldDefinition = getFieldDefinition(variable);
 
             // Special handling for enclosure (documents) fields
             if (fieldDefinition?.type === "enclosure") {
-              // Get the document path either from formValues or apiData
               const docPath =
                 formValues[variable] || apiData?.data?.enclosures?.[variable];
-
-              // Define the base URL explicitly
-              const previewUrlBase = "http://localhost:5000/uploads"; // Base URL should point to /uploads
-
-              // Normalize the docPath by replacing backslashes with forward slashes
-              const normalizedDocPath = docPath?.replace(/\\/g, "/"); // Replace \ with /
-
-              // Remove redundant "uploads/" if it exists in the normalized path
+              const previewUrlBase = "http://localhost:5000/uploads";
+              const normalizedDocPath = docPath?.replace(/\\/g, "/");
               const finalDocPath = normalizedDocPath?.startsWith("uploads/")
-                ? normalizedDocPath.replace(/^uploads\//, "") // Remove the "uploads/" prefix if it exists
+                ? normalizedDocPath.replace(/^uploads\//, "")
                 : normalizedDocPath;
-
               return (
                 <div key={fieldIndex} className="preview-row document-item">
                   <span className="preview-label">{label}:</span>
                   {finalDocPath ? (
                     <a
-                      href={`${previewUrlBase}/${finalDocPath}`} // Combine the base URL and the final path
+                      href={`${previewUrlBase}/${finalDocPath}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="document-link"
@@ -191,11 +196,9 @@ const Preview = ({ endpoint, formValues, formStructure }) => {
                 </div>
               );
             }
-            // Do not display regular fields that are empty or have no value
             if (value === undefined || value === null || value === "") {
               return null;
             }
-
             return (
               <div key={fieldIndex} className="preview-row">
                 <span className="preview-label">{label}:</span>

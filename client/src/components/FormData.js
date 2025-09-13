@@ -26,7 +26,12 @@ const FormData = ({ stepData, formFields, formValues, onFieldChange, formDraftVa
                     field.isRequired ? "required-field" : ""
                   }`}
                 >
-                  {field?.label?.en ?? ''}
+                  {field?.label?.enLabel 
+    ?? field?.label?.en 
+    ?? field?.label?.asLabel 
+    ?? field?.label?.as 
+    ?? (typeof field?.label === "string" ? field.label : "")
+  }
                 </label>
 
                 <FieldFactory 

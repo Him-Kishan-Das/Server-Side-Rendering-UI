@@ -72,7 +72,13 @@ const Form = () => {
                 <div className="stepper-card" key={index}>
                   <div className="step-number">{index + 1}</div>
                   <div className="step-content">
-                    <h3>{step.header}</h3>
+                  <h3>
+  {step.header
+    ? typeof step.header === "object"
+      ? step.header.en || Object.values(step.header)[0] // Prefer English, else first available
+      : step.header
+    : ""}
+</h3>
                     {step.intro && <p>{step.intro}</p>}
                   </div>
                   {step.isLock?.initVale && (

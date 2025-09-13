@@ -8,7 +8,12 @@ const JsonBack = ({ button, onBack }) => {
             id={button.type}
             onClick={onBack}
         >
-            {button.enLabel}
+                        {button?.enLabel 
+  ?? button?.lnLabel?.en 
+  ?? button?.lnLabel?.enLabel 
+  ?? (typeof button?.lnLabel === "string" ? button.lnLabel : "") 
+  ?? ""
+}
         </button>
     )
 }

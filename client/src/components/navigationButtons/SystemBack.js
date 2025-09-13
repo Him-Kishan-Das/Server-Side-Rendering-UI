@@ -16,7 +16,12 @@ const SystemBack = ({ button }) => {
             id={button.type}
             onClick={handleClick}
         >
-            {button.enLabel}
+            {button?.enLabel 
+  ?? button?.lnLabel?.en 
+  ?? button?.lnLabel?.enLabel 
+  ?? (typeof button?.lnLabel === "string" ? button.lnLabel : "") 
+  ?? ""
+}
         </button>
     );
 };
